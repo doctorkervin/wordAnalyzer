@@ -1,0 +1,214 @@
+﻿<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+>
+<head
+	th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+<title>编辑网站角色 - 管理员管理</title>
+<meta charset="utf-8">
+<style type="text/css"></style>
+<link>
+</head>
+<body>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>角色名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			<input type="hidden" class="input-text" th:value="${p.id}" placeholder="" name="id">
+				<input type="text" class="input-text" th:value="${p.name}" placeholder="" id="roleName" name="name">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>角色代码：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" th:value="${p.code}" placeholder="" id="roleName" name="code">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">描述：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" th:value="${p.description}" placeholder="" id="" name="description">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">网站角色：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<dl class="permission-list" th:each="row,rowStatus:${pMenus}">
+					<dt>
+						<label >
+							<input type="checkbox" th:value="${row.id}" th:id="'authority_'+${row.id}" name="authorityIds">
+							<span th:text="${row.name}">资讯管理</span>
+							</label>
+					</dt>
+					<dd>
+							<dl class="cl permission-list2"
+								th:each="crow,crowStatus:${aMenus}"
+								th:if="${row.id} eq ${crow.parent==null?'0':crow.parent.id}">
+								<dt>
+									<label class=""> <input type="checkbox" th:value="${crow.id}"
+										name="authorityIds" th:id="'authority_'+${crow.id}"> <span
+										th:text="${crow.name}">栏目管理</span>
+									</label>
+								</dt>
+								<dd>
+									<label class="" th:each="brow,browStatus:${button}" th:if="${brow.parent.id} eq ${crow.id}">
+									 <input type="checkbox" th:value="${brow.id}"
+										th:id="'authority_'+${brow.id}" name="authorityIds" >
+										<span th:text="${brow.name}">添加</span>
+									</label>
+								</dd>
+							</dl>
+						<!-- <dl class="cl permission-list2">
+							<dt>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-0-1" id="user-Character-0-1">
+									文章管理</label>
+							</dt>
+							<dd>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-0-1-0" id="user-Character-0-1-0">
+									添加</label>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-0-1-0" id="user-Character-0-1-1">
+									修改</label>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-0-1-0" id="user-Character-0-1-2">
+									删除</label>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-0-1-0" id="user-Character-0-1-3">
+									查看</label>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-0-1-0" id="user-Character-0-1-4">
+									审核</label>
+								<label class="c-orange"><input type="checkbox" value="" name="user-Character-0-2-0" id="user-Character-0-2-5"> 只能操作自己发布的</label>
+							</dd>
+						</dl> -->
+                   <dd>
+				</dl>
+				<!-- <dl class="permission-list">
+					<dt>
+						<label>
+							<input type="checkbox" value="" name="user-Character-0" id="user-Character-1">
+							用户中心</label>
+					</dt>
+					<dd>
+						<dl class="cl permission-list2">
+							<dt>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-1-0" id="user-Character-1-0">
+									用户管理</label>
+							</dt>
+							<dd>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-1-0-0" id="user-Character-1-0-0">
+									添加</label>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-1-0-0" id="user-Character-1-0-1">
+									修改</label>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-1-0-0" id="user-Character-1-0-2">
+									删除</label>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-1-0-0" id="user-Character-1-0-3">
+									查看</label>
+								<label class="">
+									<input type="checkbox" value="" name="user-Character-1-0-0" id="user-Character-1-0-4">
+									审核</label>
+							</dd>
+						</dl>
+					</dd>
+				</dl> -->
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button type="submit" class="btn btn-success radius" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+			</div>
+		</div>
+	</form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<div th:replace="~{fragment/_footer::_footer}"></div>
+<script type="text/javascript" th:inline="javascript" >
+/*<![CDATA[*/
+	var checkedList=/*[[${aList}]]*/'';
+/*]]>*/
+$(function(){
+	$(".permission-list dt input:checkbox").click(function(){
+		$(this).closest("dl").find("dd input:checkbox").prop("checked",$(this).prop("checked"));
+	});
+	$(".permission-list2 dd input:checkbox").click(function(){
+		var l =$(this).parent().parent().find("input:checked").length;
+		var l2=$(this).parents(".permission-list").find(".permission-list2 dd").find("input:checked").length;
+		if($(this).prop("checked")){
+			$(this).closest("dl").find("dt input:checkbox").prop("checked",true);
+			$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",true);
+		}
+		else{
+			if(l==0){
+				$(this).closest("dl").find("dt input:checkbox").prop("checked",false);
+			}
+			if(l2==0){
+				$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",false);
+			}
+		}
+	});
+	
+	$("#form-admin-role-add").validate({
+		rules:{
+            name: {
+                required: true,
+                maxlength: 128
+            },
+            code: {
+                required: true,
+                maxlength: 128
+            },
+            description: {
+                maxlength: 255
+            },
+		},
+		onkeyup:false,
+		focusCleanup:true,
+		success:"valid",
+		submitHandler:function(form){
+			//ajax
+			$.ajax({
+				type: 'post',
+				data:$(form).serialize(),
+				url: "/role/saveOrUpdate" ,
+				dataType:"json",
+				success: function(data){
+					if(data.code==Result.SUCCESS){
+					parent.layer.msg(data.msg,{icon:1,time:3000});
+					//关闭
+					var index = parent.layer.getFrameIndex(window.name);
+					parent.$('.btn-success').click();
+					parent.layer.close(index);
+					}else if(data.code==Result.FAIL){
+						parent.layer.msg(data.msg,{icon:1,time:3000});
+					}else{
+						console.log(data);
+					}
+				}
+              
+			});
+			/* $(form).ajaxSubmit();
+			var index = parent.layer.getFrameIndex(window.name);
+			parent.layer.close(index); */
+		}
+	});
+	
+	
+	 for( c in checkedList){
+		$("#authority_"+checkedList[c].id).attr("checked","checked");
+	}
+	 
+});
+
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="ehcache.xsd">
+	<defaultCache eternal="false" maxElementsInMemory="1000"
+		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="0"
+		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+	<cache name="dict" maxEntriesLocalHeap="200"
+		timeToLiveSeconds="300">
+	</cache>
+	<cache name="googlev" maxEntriesLocalHeap="200"
+		timeToLiveSeconds="300">
+	</cache>
+	<cache name="order" maxEntriesLocalHeap="200"
+		timeToLiveSeconds="600">
+	</cache>
+	<cache name="role" maxEntriesLocalHeap="200"
+		timeToLiveSeconds="60000">
+	</cache>
+	<cache name="authority" maxEntriesLocalHeap="200"
+		timeToLiveSeconds="60000">
+	</cache>
+	<cache name="user" maxEntriesLocalHeap="200"
+		timeToLiveSeconds="600">
+	</cache>
+	<cache name="merchant" maxEntriesLocalHeap="200"
+		timeToLiveSeconds="600">
+	</cache>
+	<cache name="bank" maxEntriesLocalHeap="200"
+		timeToLiveSeconds="600">
+	</cache>
+</ehcache>

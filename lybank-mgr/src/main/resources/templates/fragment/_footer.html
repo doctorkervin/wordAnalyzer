@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<footer th:fragment="_footer">
+		<script type="text/javascript"
+			th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+		<script type="text/javascript" th:src="@{/static/h-ui/js/H-ui.min.js}"></script>
+		<script type="text/javascript"
+			th:src="@{/static/h-ui.admin/js/H-ui.admin.js}"></script>
+		<script type="text/javascript"
+			th:src="@{/lib/jquery.validation/1.14.0/jquery.validate.js}"></script>
+		<script type="text/javascript"
+			th:src="@{/lib/jquery.validation/1.14.0/validate-methods.js}"></script>
+		<script type="text/javascript"
+			th:src="@{/lib/jquery.validation/1.14.0/messages_zh.js}"></script>
+		<script type="text/javascript" th:src="@{/lib/layer/3.1.1/layer.js}"></script>
+		<script type="text/javascript" th:src="@{/lib/laypage/1.2/laypage.js}"></script>
+		<script type="text/javascript" th:inline="javascript">
+			 /*<![CDATA[*/
+			var Result = {};
+			Result.SUCCESS = "success";
+			Result.FAIL = "fail";
+			var ctxPath = /*[[@{/}]]*/'';
+			var rootPath = /*[[${#httpServletRequest.getScheme() + '://' + #httpServletRequest.getServerName() + ':' + #request.getServerPort()}]]*/'';
+			/*]]>*/
+			var indexClose = "";
+			$.ajaxSetup({
+				global : true,
+				dataType : "json",
+				beforeSend : function(e) {
+					indexClose = layer.load();
+					//console.log(indexClose);
+				},
+				complete : function(e) {
+					layer.close(indexClose);
+				},
+				timeout : 60000,
+				success : function(data) {
+					//console.log("success",xhr);
+					//console.log("success")
+				},
+				error : function(xhr, stat, error) {
+					//console.log(data);
+					layer.alert(xhr.responseText);
+				}
+			});
+			$(function(){
+				$("body").on("change","select[name='pageSize']",function(t){
+					$("form input[name='size']").val($("select[name='pageSize']").val());
+					//console.log($("select[name='pageSize']").val());
+					$("form[name='search']").submit();
+				});
+			});
+		</script>
+
+	</footer>
+</body>
+</html>

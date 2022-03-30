@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+        th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+    <!-- <meta th:include="~{fragment/_meta::_meta}"></meta> -->
+    <meta charset="utf-8">
+    <link>
+    <title>新增任务信息 </title>
+    <style type="text/css"></style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-regular-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" autocomplete="off"
+                       placeholder="任务名称" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>测试人员：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" autocomplete="off"
+                       placeholder="测试人员" id="scanner" name="scanner">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>规则列表</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <dl class="permission-list" id="bankAccountInfoId-dl-list">
+                    <dt class="bankAccountInfoId-dt">
+                        <label>
+                            <span>规则信息</span>
+                        </label>
+                    </dt>
+                    <dd class="merchantBankInfo-dd">
+                        <label class="" th:each="row,rowStatus:${regularInfoList}">
+                            <input type="checkbox" th:value="${row.id}" name="idList" id="idList">
+                            <span th:text="${row.name}"></span>
+                            &nbsp;&nbsp;&nbsp;
+                        </label>
+                    <dd>
+                </dl>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>文件类型：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span class="select-box">
+                    <select class="select" name="fileType" size="1">
+                        <option selected value="3" >密钥文件路径</option>
+                        <option selected value="2" >自定义文件路径</option>
+                        <option selected value="1" >上传文件</option>
+                    </select>
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>文件路径：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <!--todo 用户可以手动选择目录或者文件，不需要手写-->
+                <input type="text" class="input-text" autocomplete="off"
+                       placeholder="非自定义文件路径不用写" id="filePath" name="filePath">
+                <input class="upload" type="file" value="选择"  id="input-file">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务描述：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" autocomplete="off"
+                       placeholder="任务描述" id="remark" name="remark">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;添加任务&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<div th:include="~{fragment/_footer::_footer}"></div>
+<!--请在下方写此页面业务相关的脚本-->
+
+<script type="text/javascript">
+    $(function () {
+
+       $(".bankAccountInfoId-dt input:checkbox").click(function () {
+            $(".bankAccountInfoId-dd input[name='idList']").prop("checked", $(this).prop("checked"));
+        });
+
+        function initCheckbox() {
+            var noSize = $("input[name='idList']").length;
+            var yesSize = $("input[name='idList']:checked").length;
+            if (noSize == yesSize) {
+                $(".bankAccountInfoId-dt input[name='idLists-dt']").prop("checked", true);
+            } else {
+                $(".bankAccountInfoId-dt input[name='idLists-dt']").prop("checked", false);
+            }
+        }
+
+        $(".bankAccountInfoId-dd input:checkbox").click(function () {
+            initCheckbox();
+        });
+
+        $("#form-regular-add").validate({
+            rules: {
+                name: {
+                    required: true,
+                    maxlength: 20,
+                },
+                type: {
+                    required: true,
+                },
+
+                remark: {
+                    required: true,
+                    maxlength: 10
+                }
+
+            },
+            messages: {},
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                $.ajax({
+                    type: 'post',
+                    data: $(form).serialize(),
+                    url: "/task/info/save",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == Result.SUCCESS) {
+                            parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                            //关闭
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.$('.btn-success').click();
+                            parent.layer.close(index);
+                        } else if (data.code == Result.FAIL) {
+                            parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                        } else {
+                            console.log(data);
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+    $('.upload').change(function(){
+            var oFReader = new FileReader();
+            var file = document.getElementById('input-file').files[0];
+            oFReader.readAsDataURL(file);
+            oFReader.onloadend = function(oFRevent){
+                var src = oFRevent.target.result;
+                document.getElementById(filePath).value = src；
+            }
+        });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

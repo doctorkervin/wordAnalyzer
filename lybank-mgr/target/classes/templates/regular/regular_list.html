@@ -1,0 +1,239 @@
+﻿<!DOCTYPE >
+<html xmlns:th="http://www.thymeleaf.org"
+>
+<head
+        th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+    <title>规则管理</title>
+    <meta charset="utf-8">
+    <style type="text/css"></style>
+    <link>
+</head>
+<body>
+<nav class="breadcrumb">
+    <i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span>
+    <span class="c-gray en">&gt;</span> 规则列表管理 <a
+        class="btn btn-success radius r"
+        style="line-height: 1.6em; margin-top: 3px"
+        onclick="location.reload()" title="刷新"><i
+        class="Hui-iconfont">&#xe68f;</i></a>
+</nav>
+<div class="page-container">
+    <div class="text-c">
+        <form class="Huiform" method="post" name="search" action="" target="_self">
+            <input type="text" class="input-text" style="width: 250px"
+                   placeholder="模糊搜索" name="name" th:value="${p.name}">
+            <button type="submit" class="btn btn-success">
+                <i class="Hui-iconfont">&#xe665;</i> 搜索
+            </button>
+            <input type="hidden" name="size" value="15"/> <input type="hidden"
+                                                                 name="page" value="0"/>
+        </form>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+			<span class="l">
+                <a href="javascript:;"
+                   onclick="pay_merchant_add('添加规则信息','/regular/info/add','1000','500')"
+                   class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i>
+                        添加规则信息</a>
+		    </span>
+
+        <span class="r">
+				<label style="margin-left: 10px">每页显示 <select
+                        name="pageSize">
+						<option value="15" th:selected="${list.size} eq 15">15</option>
+						<option value="25" th:selected="${list.size} eq 25">25</option>
+						<option value="50" th:selected="${list.size} eq 50">50</option>
+						<option value="100" th:selected="${list.size} eq 100">100</option>
+				</select> 条
+				</label>
+			</span>
+        <span class="r">共有数据：<strong th:text="${list.totalElements}">0</strong>
+				条 <strong th:text="${list.totalPages}">0</strong> 页
+			</span>
+    </div>
+    <table class="table table-border table-bordered table-bg">
+        <thead>
+        <tr>
+            <th scope="col" colspan="20">规则列表</th>
+        </tr>
+        <tr class="text-c">
+            <th width="25"><input type="checkbox" name="" value=""></th>
+            <th width="40">编号</th>
+            <th width="50">规则名称</th>
+            <th width="50">规则类型</th>
+            <th width="50">规则值</th>
+            <th width="50">规则描述</th>
+            <th width="50">创建时间</th>
+            <th width="50">操作时间</th>
+            <th width="100">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="text-c" th:each="row,rowStat: ${list.content}">
+            <td><input type="checkbox" th:value="${row.id}" name=""/></td>
+            <td th:text="${row.id}"></td>
+            <td th:text="${row.name}"></td>
+            <td>
+                <span th:if="${row.type} eq 3">模糊匹配</span>
+                <span th:if="${row.type} eq 2">自然语言</span>
+                <span th:if="${row.type} eq 1">正则表达式</span>
+            </td>
+            <td th:text="${row.value} "></td>
+            <td th:text="${row.remark}"></td>
+            <td th:text="${#dates.format(row.createTime, 'yyyy-MM-dd hh:mm:ss')}"></td>
+            <td th:text="${#dates.format(row.operaterTime, 'yyyy-MM-dd hh:mm:ss')}"></td>
+            <td>
+                <a title="编辑" href="javascript:;" th:if="${row.type} eq 3"
+                   th:onclick="|pay_merchant_edit('编辑规则信息','/regular/info/edit','${row.id}','1000','500')|"
+                   class="ml-5" style="text-decoration: none"><i
+                        class="Hui-iconfont">&#xe6df;</i></a>
+                <a title="查看" href="javascript:;"
+                   th:onclick="|pay_merchant_view('查看规则信息','/regular/info/view','${row.id}','1000','500')|"
+                   class="ml-5" style="text-decoration: none"><i
+                        class="Hui-iconfont">&#xe725;</i></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div id="page"></div>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<div th:replace="~{fragment/_footer::_footer}"></div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(function () {
+        laypage({
+            cont: $('#page'),
+            pages: [[${list.totalPages}]],        //总页数
+            skip: true,
+            curr: [[${list.number+1}]],              //当前页码
+            pageSize: [[${list.size}]],          //每页条数
+            skin: '#46b8da',             //设置皮肤
+            groups: 3, //连续显示分页数
+            limits: [10, 20, 30, 50, 100],
+            first: '首页', //若不显示，设置false即可
+            last: '尾页', //若不显示，设置false即可
+            prev: '上一页', //若不显示，设置false即可
+            next: '下一页', //若不显示，设置false即可
+            jump: function (obj, first) {
+                if (!first) {
+                    $("form input[name='size']").val(obj.pageSize);
+                    $("form input[name='page']").val(obj.curr - 1);
+                    $("select[name='pageSize']").val(obj.pageSize)
+                    $("form[name='search']").submit();
+                    //console.log(obj.curr);      //传递当前页
+                }
+            }
+        });
+        //文件上传
+    })
+
+
+    /*
+     参数解释：
+     title	标题
+     url		请求的url
+     id		需要操作的数据id
+     w		弹出层宽度（缺省调默认值）
+     h		弹出层高度（缺省调默认值）
+     */
+    /*查看*/
+    function pay_merchant_view(title, url, id, w, h) {
+        layer_show(title, url + "?id=" + id, w, h);
+    }
+
+    /*
+    参数解释：
+    title	标题
+    url		请求的url
+    id		需要操作的数据id
+    w		弹出层宽度（缺省调默认值）
+    h		弹出层高度（缺省调默认值）
+    */
+    /*编辑*/
+    function pay_merchant_edit(title, url, id, w, h) {
+        layer_show(title, url + "?id=" + id, w, h);
+    }
+
+
+    function pay_merchant_all_edit(title, url, w, h) {
+        //获取IDs
+        var datas = $("tbody input:checkbox:checked");
+        if(!datas || datas.length < 1){
+            layer.alert("请选择修改的数据！");
+            return;
+        }
+        var checkedList = new Array();
+        // console.log(datas);
+        $.each(datas, function (index, data) {
+            //console.log(data,index);
+            checkedList.push($(data).val());
+        });
+        var idStr = checkedList.join(",");
+        layer_show(title, url + "?idStr=" + idStr, w, h);
+    }
+    /*
+    参数解释：
+    title	标题
+    url		请求的url
+    id		需要操作的数据id
+    w		弹出层宽度（缺省调默认值）
+    h		弹出层高度（缺省调默认值）
+    */
+    /*新增*/
+    function pay_merchant_add(title, url, w, h) {
+        layer_show(title, url, w, h);
+    }
+
+    //$(document).off("click",".btn-danger");
+    //$(document).on("click",".btn-danger",function(){});
+    //删除
+    $(".btn-danger").off("click");
+    $(".btn-danger").on("click", function (e) {
+        var checkedList = new Array();
+        //获取IDs
+        var datas = $("tbody input:checkbox:checked");
+        // console.log(datas);
+        $.each(datas, function (index, data) {
+            //console.log(data,index);
+            checkedList.push($(data).val());
+        });
+        if (checkedList.length <= 0) {
+            layer.alert("请选择删除的数据！");
+            return;
+        }
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'POST',
+                url: '/merchant/merchant/info/batchDel',
+                data: {
+                    ids: checkedList.join(",")
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == Result.SUCCESS) {
+                        // $.each(data.data, function (i, item) {
+                        //     $("tbody input[type='checkbox'][value='" + item.id + "']").parents("tr").remove();
+                        // });
+                        layer.msg('删除成功!', {
+                            icon: 1,
+                            time: 3000
+                        });
+                        $(".btn-success").click();
+                    } else {
+                        layer.msg(data.msg, {
+                            icon: 1,
+                            time: 3000
+                        });
+                    }
+                }
+                /* error:function(data) {
+                    console.log(data.msg);
+                }, */
+            });
+        });
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

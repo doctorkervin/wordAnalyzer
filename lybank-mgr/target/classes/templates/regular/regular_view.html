@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+>
+<head
+        th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+    <!-- <meta th:include="~{fragment/_meta::_meta}"></meta> -->
+    <title>查看规则信息</title>
+    <meta charset="utf-8">
+    <link>
+    <style type="text/css"></style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-merchant-view">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">规则名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${p.name}" th:text="${p.name}"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">规则类型：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${p.type}" th:text="${p.type}"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">规则编码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${p.value}" th:text="${p.value}"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">规则描述：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${p.remark}" th:text="${p.remark}"></span>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">创建时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${#dates.format(p.createTime, 'yyyy-MM-dd hh:mm:ss')}" th:text="${#dates.format(p.createTime, 'yyyy-MM-dd hh:mm:ss')}"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">操作时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${#dates.format(p.operaterTime, 'yyyy-MM-dd hh:mm:ss')}" th:text="${#dates.format(p.operaterTime, 'yyyy-MM-dd hh:mm:ss')}"></span>
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<div th:include="~{fragment/_footer::_footer}"></div>
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head
+        th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+    <!-- <meta th:include="~{fragment/_meta::_meta}"></meta> -->
+    <meta charset="utf-8">
+    <link>
+    <title>添加权限 </title>
+    <style type="text/css"></style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-admin-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">父级：</label>
+            <div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+			<select class="select" name="parent.id" size="1">
+				 <option value="0">无</option>
+				<option th:value="${m.id}" th:text="${m.name}" th:each="m,mStat: ${pMenus}">菜单</option>
+			</select>
+			</span></div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权限名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权限代码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" autocomplete="off" value="" placeholder="字段名" id="code"
+                       name="code">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">类型：</label>
+            <div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+			<select class="select" name="type" size="1">
+				<option value="menus">菜单</option>
+				<option value="button">按钮</option>
+			</select>
+			</span></div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<div th:include="~{fragment/_footer::_footer}"></div>
+<!--请在下方写此页面业务相关的脚本-->
+
+<script type="text/javascript">
+    $(function () {
+        $("textarea[name='remark']").on("keyup", function (e) {
+            //alert("tt");
+            $("textarea[name='remark']").Huitextarealength({maxlength: 100});
+        })
+
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+
+        $("#form-admin-add").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 2,
+                    maxlength: 16
+                },
+                code: {
+                    required: true,
+                    maxlength: 255
+                }
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                $.ajax({
+                    type: 'post',
+                    data: $(form).serialize(),
+                    url: "/authority/saveOrUpdate",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == Result.SUCCESS) {
+                            parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                            //关闭
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.$('.btn-success').click();
+                            parent.layer.close(index);
+
+                        } else if (data.code == Result.FAIL) {
+                            parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                        } else {
+                            console.log(data);
+                        }
+                    }
+                    /*      error: function(XmlHttpRequest, textStatus, errorThrown){
+                             console.log(XmlHttpRequest,textStatus,errorThrown);
+                             alert("errror")
+                             parent.layer.msg('error!',{icon:1,time:3000});
+                         } */
+                });
+
+            }
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

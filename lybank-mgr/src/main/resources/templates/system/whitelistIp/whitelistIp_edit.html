@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+        th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+    <!-- <meta th:include="~{fragment/_meta::_meta}"></meta> -->
+    <link>
+    <title>编辑商户IP信息</title>
+    <style type="text/css"></style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="whitelist-ip-edit">
+        <input type="hidden" th:value="${p.id}" name="id"/>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>所属商户：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span class="select-box">
+                    <select class="select" name="merchantCode" id="merchantCode" size="1">
+                        <option value="">请选择</option>
+                        <option th:each="merchant,rowStat:${merchantInfoList}" th:selected="${merchant.merchantCode} eq ${p.merchantCode}"
+                                th:value="${merchant.merchantCode}" th:text="${merchant.name}"></option>
+                    </select>
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>IP：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="请输入IP地址" id="ip" name="ip" th:value="${p.ip}">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>类型：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select class="select" name="type" id="type" size="1">
+                    <option value="">请选择</option>
+                    <option value="1" th:selected="${p.type} eq 1">后台白名单</option>
+                    <option value="2" th:selected="${p.type} eq 2">接口白名单</option>
+                </select>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>启用：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div class="radio-box">
+                    <input type="radio" id="sex-1" name="isEnable" value="1" th:checked="${p.isEnable eq 1}">
+                    <label for="sex-1">是</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="sex-2" name="isEnable" value="2" th:checked="${p.isEnable eq 2}">
+                    <label for="sex-2">否</label>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">备注：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea name="remark" cols="" rows="" class="textarea valid" placeholder="描述...100个字符以内"
+                          dragonfly="true" th:text="${p.remark}"></textarea>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;修改商户IP&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<div th:include="~{fragment/_footer::_footer}"></div>
+<!--请在下方写此页面业务相关的脚本-->
+
+<script type="text/javascript">
+    $("#whitelist-ip-edit").validate({
+        rules: {
+            merchantCode: {
+                required: true
+            },
+            isEnable: {
+                required: true
+            },
+            type: {
+                required: true
+            },
+            ip: {
+                required: true,
+                maxlength: 20
+            },
+            remark: {
+                maxlength: 128
+            }
+        },
+        messages: {},
+        onkeyup: false,
+        focusCleanup: true,
+        success: "valid",
+        submitHandler: function (form) {
+            var formData = $(form).serialize();
+            $.ajax({
+                type: 'post',
+                data: formData,
+                url: "/system/whitelist/ip/saveOrUpdate",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == Result.SUCCESS) {
+                        parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                        //关闭
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.$('.btn-success').click();
+                        parent.layer.close(index);
+                    } else if (data.code == Result.FAIL) {
+                        parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                    } else {
+                        console.log(data);
+                    }
+                }
+            });
+        }
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

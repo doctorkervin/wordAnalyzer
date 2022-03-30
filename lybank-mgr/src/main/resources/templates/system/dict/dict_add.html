@@ -1,0 +1,80 @@
+﻿<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head
+	th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+<title>新增配置参数信息</title>
+<meta charset="utf-8">
+<style type="text/css"></style>
+<link>
+</head>
+<body>
+<article class="page-container">
+	<form action="/dict/saveOrUpdate" method="post" class="form form-horizontal" id="form-admin-dict-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>唯一编码：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="唯一编码" id="key" name="key">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>值：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="值" id="value" name="value">
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button type="submit" class="btn btn-success radius" id="admin-role-save" name="admin-dict-save"><i class="icon-ok"></i> 添加</button>
+			</div>
+		</div>
+	</form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<div th:replace="~{fragment/_footer::_footer}"></div>
+<script type="text/javascript">
+$(function(){
+    $("#form-admin-dict-add").validate({
+        rules: {
+            key: {
+                required: true,
+                maxlength: 255
+            },
+            value: {
+                required: true,
+                maxlength: 255
+            }
+        },
+        messages: {},
+        onkeyup: false,
+        focusCleanup: true,
+        success: "valid",
+        submitHandler: function (form) {
+            $.ajax({
+                type: 'post',
+                data: $(form).serialize(),
+                url: "/dict/saveOrUpdate",
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == Result.SUCCESS) {
+                        parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                        //关闭
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.$('.btn-success').click();
+                        parent.layer.close(index);
+                    } else if (data.code == Result.FAIL) {
+                        parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                    } else {
+                        console.log(data);
+                    }
+                }
+            });
+        }
+    });
+});
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

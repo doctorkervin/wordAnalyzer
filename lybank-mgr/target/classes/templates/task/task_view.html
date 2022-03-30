@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+>
+<head
+        th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+    <!-- <meta th:include="~{fragment/_meta::_meta}"></meta> -->
+    <title>查看任务信息</title>
+    <meta charset="utf-8">
+    <link>
+    <style type="text/css"></style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-merchant-view">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">任务名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${p.name}" th:text="${p.name}"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">测试人员：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${p.scanner}" th:text="${p.scanner}"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">测试文件来源：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:if="${p.fileType} eq 1">自定义文件路径</span>
+                <span th:if="${p.fileType} eq 2">上传文件</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">任务规则：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <dd class="taskInfo-dd">
+                    <label class="" th:each="row,rowStatus:${regulars}">
+                        <span th:text="${row.name}"></span>
+                        &nbsp;&nbsp;&nbsp;
+                    </label>
+                <dd>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">任务状态：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:if="${p.status} eq 2">结束</span>
+                <span th:if="${p.status} eq 1">运行中</span>
+                <span th:if="${p.status} eq 0">新建</span>
+            </div>
+        </div>
+
+        <!--通过任务状态显示运行任务按钮-->
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">任务结果：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea name="value" cols="" rows="" class="textarea valid" placeholder="任务结果"
+                          dragonfly="true" th:text="${p.result}"></textarea>
+            </div>
+        </div>
+       <!-- <button id="run" th:style="'display:' + @{(${p.status} == 3 ? 'none' : 'inline-block')} + ''" class="btn btn-primary" th:onclick="|exportTaskResult(this,${p.id})|">导出</button>-->
+
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<div th:include="~{fragment/_footer::_footer}"></div>
+<script type="text/javascript">
+   function exportTaskResult(object,id){
+
+       $.ajax({
+            type: 'post',
+            data: {
+               "id":id
+           },
+            url: "/task/info/export",
+            dataType: "json",
+            success: function (data) {
+                if (data.code == Result.SUCCESS) {
+
+                    parent.layer.close(index);
+                } else if (data.code == Result.FAIL) {
+                    parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                } else {
+                    console.log(data);
+                }
+            }
+        });
+   }
+
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+        th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+    <!-- <meta th:include="~{fragment/_meta::_meta}"></meta> -->
+    <meta charset="utf-8">
+    <link>
+    <title>新增规则信息 </title>
+    <style type="text/css"></style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-regular-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>规则名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" autocomplete="off"
+                       placeholder="规则名称" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>规则代码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" autocomplete="off"
+                       placeholder="规则代码" id="code" name="code">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>规则类型：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span class="select-box">
+                    <select class="select" name="type" size="1">
+                        <option selected value="1" >正则表达式</option>
+                        <option selected value="2" >自然语言</option>
+                        <option selected value="3" >模糊匹配</option>
+                    </select>
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>规则值</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea name="value" cols="" rows="" class="textarea valid" placeholder="规则值"
+                          dragonfly="true"></textarea>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>规则描述：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" autocomplete="off"
+                       placeholder="规则描述" id="remark" name="remark">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;添加规则&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<div th:include="~{fragment/_footer::_footer}"></div>
+<!--请在下方写此页面业务相关的脚本-->
+
+<script type="text/javascript">
+    $(function () {
+        $("#form-regular-add").validate({
+            rules: {
+                name: {
+                    required: true,
+                    maxlength: 20,
+                },
+                type: {
+                    required: true,
+                },
+
+                remark: {
+                    required: true,
+                    maxlength: 10
+                }
+
+            },
+            messages: {},
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                $.ajax({
+                    type: 'post',
+                    data: $(form).serialize(),
+                    url: "/regular/info/save",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == Result.SUCCESS) {
+                            parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                            //关闭
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.$('.btn-success').click();
+                            parent.layer.close(index);
+                        } else if (data.code == Result.FAIL) {
+                            parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                        } else {
+                            console.log(data);
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

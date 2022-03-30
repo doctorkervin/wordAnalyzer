@@ -1,0 +1,173 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" >
+<meta charset="utf-8">
+<meta name="keywords"
+	content="敏感数据检测系统">
+<meta name="description"
+	content="敏感数据检测系统">
+<head
+	th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+<link href="static/h-ui.admin/css/H-ui.login.css" rel="stylesheet"
+	type="text/css" />
+<title>敏感数据检测后台登录 </title>
+<style type="text/css"></style>
+</head>
+<body>
+
+	<input type="hidden" id="TenantId" name="TenantId" value="" />
+	<div class="header"></div>
+	<div class="loginWraper">
+		<div id="loginform" class="loginBox">
+		<div class="form form-horizontal" > 
+				<div class="row cl">
+					<label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60d;</i></label>
+					<div class="formControls col-xs-8">
+						<input name="username" type="text" placeholder="账户"
+							class="input-text size-L">
+					</div>
+				</div>
+				<div class="row cl">
+					<label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60e;</i></label>
+					<div class="formControls col-xs-8">
+						<input name="password" type="password" placeholder="密码"
+							class="input-text size-L">
+					</div>
+				</div>
+				
+			<!-- 	<div class="row cl">
+				<span class="red" th:text="${param.msg}"></span>
+				</div> -->
+				<div class="row cl">
+					<div class="formControls col-xs-8 col-xs-offset-3">
+						<input name="verifyCode" class="input-text size-L" type="text" placeholder="验证码"
+							 value=""
+							style="width: 150px;"> <img onclick="resetCode()" id="codeImg" src="/defaultKaptcha"> <a id="kanbuq"
+							href="javascript:resetCode();">看不清，换一张</a>
+					</div>
+				</div>
+				<div class="row cl">
+					<div class="formControls col-xs-8 col-xs-offset-3">
+						<label for="online"> <input type="checkbox" name="remember-me"
+							id="online" value=""> 使我保持登录状态
+						</label>
+					</div>
+				</div>
+				<div class="row cl">
+					<div class="formControls col-xs-8 col-xs-offset-3">
+						<input name="" id="submit" type="submit"  class="btn btn-success radius size-L"
+							value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;"> <input
+							name="" type="reset" class="btn btn-default radius size-L"
+							value="&nbsp;取&nbsp;&nbsp;&nbsp;&nbsp;消&nbsp;">
+					</div>
+				</div>
+			 </div> 
+		</div>
+	</div>
+	<div class="footer">Copyright 全能技术有限公司</div>
+	
+
+	<div th:replace="~{fragment/_footer::_footer}"></div>
+	<script type="text/javascript">
+	$(document).keyup(function(event){
+		  if(event.keyCode ==13){
+		    $("#submit").trigger("click");
+		  }
+		});
+	  var codeFlag=false;
+	//刷新验证码
+	function resetCode(){
+		$("#codeImg").attr("src","/defaultKaptcha");
+	}
+	$(function(){
+		//提交表单
+		$("body").on("click","input[type='submit']",function(e){
+			var username=$("input[name='username']").val();
+			var password=$("input[name='password']").val();
+			var verifyCode=$("input[name='verifyCode']").val();
+			//console.log(verifyCode);
+			var googleCode;
+			//校验
+			if(!username){
+			layer.alert("用户名不能为空！");	
+			return;
+			}
+			if(!password){
+				layer.alert("密码不能为空！");
+				return ;
+			}
+			if(!verifyCode||verifyCode==""){
+				layer.alert("验证码不能为空！");
+				return ;
+			}
+			codeFlag=false;
+			//post 请求提交表单
+			loginPost(username,password,verifyCode,googleCode);
+		
+	});
+	});
+	function loginPost(username,password,verifyCode,googleCode){
+			$.ajax({
+				url:"/login",
+				type:"post",
+				dataType:"json",
+				data:{
+				username:username,
+				password:password,
+				verifyCode:verifyCode,
+				googleCode:googleCode
+				},
+				/* beforeSend:function(){
+					//loading
+				// $(".modal").modal("show");
+					//$.Huimodalalert('正在登录...',1000);
+					$.ligerDialog.waitting('正在登录中,请稍候...');
+				}, */
+				/* complete:function(){
+					//$.Huimodalalert.hide();
+					//display loading
+				//	 $(".modal").modal("hide");
+					$.ligerDialog.closeWaitting();
+				}, */
+				error:function(e){
+					$.ligerDialog.error("系统异常！");
+				},
+				success:function(data){
+					
+					if(data.code=="verify"){
+					//if(true){
+		                //提示谷歌验证码
+		                	  if(codeFlag) alert(data.msg);
+				        	   //弹窗输入验证码
+				        	    layer.prompt({
+								  formType: 0,
+								  value: '',
+								  title: '请输入谷歌验证码',
+								  area: ['800px', '350px'] //自定义文本域宽高
+								}, function(value, index, elem){
+								  codeFlag=true;
+								  loginPost(username,password,verifyCode,value);
+								  layer.close(index);
+								  });
+				        	  /*  $.ligerDialog.prompt('请输入谷歌验证码','', function (yes,value) { 
+				        		   codeFlag=true;
+				        		   if(yes)
+				        			   loginPost(username,password,verifyCode,value);
+				        		   }); */
+				        	   return;
+					}
+					//刷新验证码
+					resetCode();
+					//console.log(data);
+					if(data.code=="fail"){
+					layer.alert(data.msg);
+						return;
+					}else if(data.code=="success"){
+					location.href="/index";
+					}
+				}
+		});
+	}
+	
+	</script>
+</body>
+</html>

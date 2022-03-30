@@ -1,0 +1,178 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="lib/html5shiv.js"></script>
+    <script type="text/javascript" src="lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css"/>
+    <!--[if IE 6]>
+    <script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <title>我的桌面</title>
+</head>
+<body>
+<div id="linear" style="width:49%;height:400px; float: left;"></div>
+<div id="circle" style="width:49%;height:400px; float: left;"></div>
+
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+
+<!-- 线性图JS引用 start -->
+<script type="text/javascript" src="lib/hcharts/Highcharts/5.0.6/js/highcharts.js"></script>
+<script type="text/javascript" src="lib/hcharts/Highcharts/5.0.6/js/modules/exporting.js"></script>
+<!-- 线性图JS引用 end -->
+
+<!--此乃百度统计代码，请自行删除-->
+<script>
+    (function () {
+        function circle(circleStr) {
+            var circleStrs = circleStr.split("=");
+            var parseFalse = parseFloat(circleStrs[1]);
+            var parseTrue = parseFloat(circleStrs[0]);
+            var circle =  Highcharts.chart('circle', {
+                title: {
+                    floating: true,
+                    text: '成功率'
+                },
+                legend: {
+                    layout: 'horizontal',
+                    align: 'center',
+                    verticalAlign: 'top'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        showInLegend: true,
+                        cursor: 'pointer',
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            //追加百分比
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        },
+                        point: {
+                            events: {
+                                mouseOver: function (e) {  // 鼠标滑过时动态更新标题
+                                    // 标题更新函数，API 地址：https://api.hcharts.cn/highcharts#Chart.setTitle
+                                    circle.setTitle({
+                                        text: e.target.name + '\t' + e.target.y + ' %'
+                                    });
+                                }
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    innerSize: '90%',
+                    name: '率',
+                    data: [
+                        {name: '失败笔数', y: parseFalse, color: '#19D4AE'},
+                        {name: '成功笔数', y: parseTrue, color: '#5AB1EF'},
+                    ]
+                }]
+            }, function (c) { // 图表初始化完毕后的会掉函数
+                // 环形图圆心
+                var centerY = c.series[0].center[1],
+                    titleHeight = parseInt(c.title.styles.fontSize);
+                // 动态设置标题位置
+                c.setTitle({
+                    y: centerY + titleHeight / 2
+                });
+            });
+        };
+
+        function linear(lineStr) {
+            var lineStrs = lineStr.split("=");
+            var categoriesArray = lineStrs[0].split(",");
+
+            Highcharts.chart('linear', {
+                title: {
+                    text: '周订单统计',
+                    x: -20 //center
+                },
+                subtitle: {
+                    // text: 'Source: WorldClimate.com',
+                    // x: -20
+                },
+                xAxis: {
+                    categories: categoriesArray
+                },
+                yAxis: {
+                    title: {
+                        text: ''
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ''
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+                series: [{
+                    name: '订单笔数(笔)',
+                    color: '#19D4AE',
+                    data: eval(lineStrs[1])
+                }, {
+                    name: '订单金额(元)',
+                    color: '#5AB1EF',
+                    data: eval(lineStrs[2])
+                }]
+            });
+        }
+
+        function initAjax() {
+            $.ajax({
+                type: 'POST',
+                url: '/pay/order/getStatistics',
+                data: {},
+                dataType: 'json',
+                success: function (data) {
+                    //
+                    if (data.code == "success") {
+                        if (data.data.lineStr) {
+                            linear(data.data.lineStr);
+                        }
+                        if (data.data.circleStr) {
+                            circle(data.data.circleStr);
+                        }
+                    } else {
+                        layer.msg('系统内部统计错误!', {
+                            icon: 1,
+                            time: 3000
+                        });
+                    }
+                }
+
+            });
+        }
+
+        initAjax();
+    })();
+</script>
+<!--/此乃百度统计代码，请自行删除-->
+</body>
+</html>

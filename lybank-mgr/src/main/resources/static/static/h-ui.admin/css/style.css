@@ -1,0 +1,13 @@
+@charset "utf-8";
+/* 你自己的样式 */
+
+.td-manage{
+	 font-size:15px; 
+}
+.text-c input,.text-c button {
+	margin-top:5px;
+}
+.max-log-width{
+	max-width:150px;
+}
+.max-log-width:hover {height: auto; word-break:break-all; white-space: pre-wrap;  text-decoration: none;}

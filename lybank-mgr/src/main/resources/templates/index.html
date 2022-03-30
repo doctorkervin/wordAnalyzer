@@ -1,0 +1,201 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head
+        th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+    <meta charset="utf-8">
+    <title>首页</title>
+    <meta name="keywords" content="敏感数据检测系统">
+    <meta name="description" content="敏感数据检测系统">
+    <link>
+    <style type="text/css"></style>
+</head>
+<body>
+<header th:include="~{fragment/_header::_header}"></header>
+<aside class="Hui-aside">
+    <div class="menu_dropdown bk_2">
+        <dl id="menu-article">
+            <dt><i class="Hui-iconfont">&#xe616;</i> 文件管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dd>
+                <ul>
+                    <li><a data-href="/upload/view" data-title="传输数据安全管理" href="javascript:void(0)">传输数据安全管理</a></li>
+                    <li><a data-href="/upload/scanView" data-title="传输数据安全扫描" href="javascript:void(0)">传输数据安全扫描</a></li>
+                    <li><a data-href="article-list.html" data-title="存储数据安全管理" href="javascript:void(0)">存储数据安全管理</a></li>
+                    <li><a data-href="article-list.html" data-title="密钥证书检测管理" href="javascript:void(0)">密钥证书检测管理</a></li>
+                </ul>
+            </dd>
+        </dl>
+        <!--<dl id="menu-picture">
+            <dt><i class="Hui-iconfont">&#xe613;</i> 图片管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dd>
+                <ul>
+                    <li><a data-href="picture-list.html" data-title="图片管理" href="javascript:void(0)">图片管理</a></li>
+                </ul>
+            </dd>
+        </dl>-->
+        <dl id="menu-regular">
+            <dt><i class="Hui-iconfont">&#xe620;</i> 规则管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dd>
+                <ul>
+                    <li>
+                        <a data-href="/regular/info/list" data-title="规则信息管理" href="javascript:;">规则信息管理</a>
+                    </li>
+                </ul>
+            </dd>
+        </dl>
+        <dl id="menu-order">
+            <dt><i class="Hui-iconfont">&#xe620;</i> 任务管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dd>
+                <ul>
+                    <li >
+                        <a data-href="/task/info/list" data-title="任务管理列表" href="javascript:;">任务管理列表</a>
+                    </li>
+                    <li >
+                        <a data-href="/task/info/log" data-title="任务运行日志" href="javascript:;">任务运行日志</a>
+                    </li>
+                </ul>
+            </dd>
+        </dl>
+        <dl id="menu-admin">
+            <dt>
+                <i class="Hui-iconfont">&#xe62d;</i> 管理员管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dd>
+                <ul>
+                    <li><a data-href="/role/list" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
+                    <li><a data-href="/authority/list" data-title="权限管理" href="javascript:void(0)">权限管理</a></li>
+                    <li><a data-href="/user/admin-list" data-title="管理员列表" href="javascript:void(0)">管理员列表</a></li>
+                </ul>
+            </dd>
+        </dl>
+        <dl id="menu-system" sec:authorize-expr="hasPermission(#authorization.authentication,'menus','system_mange')">
+            <dt><i class="Hui-iconfont">&#xe62e;</i> 系统管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dd>
+                <ul>
+                    <!-- <li><a data-href="system-base.html" data-title="系统设置" href="javascript:void(0)">系统设置</a></li>
+                    <li><a data-href="system-category.html" data-title="栏目管理" href="javascript:void(0)">栏目管理</a></li>
+                    <li><a data-href="system-data.html" data-title="数据字典" href="javascript:void(0)">数据字典</a></li>
+                    <li><a data-href="system-shielding.html" data-title="屏蔽词" href="javascript:void(0)">屏蔽词</a></li> -->
+                    <li sec:authorize-expr="hasPermission(#authorization.authentication,'menus','system_log')"><a
+                            data-href="/systemlog/list" data-title="系统日志" href="javascript:void(0)">系统日志</a></li>
+                    <li sec:authorize-expr="hasPermission(#authorization.authentication,'menus','system_dict')"><a
+                            data-href="/dict/list" data-title="配置参数管理" href="javascript:void(0)">配置参数管理</a></li>
+                    <li sec:authorize-expr="hasPermission(#authorization.authentication,'menus','pay_whitelistIp_manage')">
+                        <a data-href="/system/whitelist/ip/list" data-title="商户IP管理"
+                           href="javascript:void(0)">商户IP管理</a></li>
+                </ul>
+            </dd>
+        </dl>
+    </div>
+</aside>
+<div class="dislpayArrow hidden-xs"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a>
+</div>
+<section class="Hui-article-box">
+    <div id="Hui-tabNav" class="Hui-tabNav hidden-xs">
+        <div class="Hui-tabNav-wp">
+            <ul id="min_title_list" class="acrossTab cl">
+                <li class="active">
+                    <span title="我的桌面" data-href="welcome.html">我的桌面</span>
+                    <em></em></li>
+            </ul>
+        </div>
+        <div class="Hui-tabNav-more btn-group"><a id="js-tabNav-prev" class="btn radius btn-default size-S"
+                                                  href="javascript:;"><i class="Hui-iconfont">&#xe6d4;</i></a><a
+                id="js-tabNav-next" class="btn radius btn-default size-S" href="javascript:;"><i class="Hui-iconfont">&#xe6d7;</i></a>
+        </div>
+    </div>
+    <div id="iframe_box" class="Hui-article">
+        <div class="show_iframe">
+            <div style="display:none" class="loading"></div>
+            <iframe scrolling="yes" frameborder="0" src="welcome.html"></iframe>
+        </div>
+    </div>
+</section>
+
+<div class="contextMenu" id="Huiadminmenu">
+    <ul>
+        <li id="closethis">关闭当前</li>
+        <li id="closeall">关闭全部</li>
+    </ul>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<div th:replace="~{fragment/_footer::_footer}"></div> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/jquery.contextmenu/jquery.contextmenu.r2.js"></script>
+<script type="text/javascript">
+$(function(){
+	/*$("#min_title_list li").contextMenu('Huiadminmenu', {
+		bindings: {
+			'closethis': function(t) {
+				console.log(t);
+				if(t.find("i")){
+					t.find("i").trigger("click");
+				}		
+			},
+			'closeall': function(t) {
+				alert('Trigger was '+t.id+'\nAction was Email');
+			},
+		}
+	});*/
+});
+/*个人信息*/
+function myselfinfo(url){
+	layer.open({
+		type: 2,
+		area: ['300px','300px'],
+		fix: false, //不固定
+		maxmin: true,
+		shade:0.4,
+		title: '查看信息',
+		content: url
+	});
+}
+/*更新个人密码*/
+function updatePassword(url){
+	layer.open({
+		type: 2,
+		area: ['500px','450px'],
+		fix: false, //不固定
+		maxmin: true,
+		shade:0.4,
+		title: '查看信息',
+		content: url
+	});
+}
+/*资讯-添加*/
+function article_add(title,url){
+	var index = layer.open({
+		type: 2,
+		title: title,
+		content: url
+	});
+	layer.full(index);
+}
+/*图片-添加*/
+function picture_add(title,url){
+	var index = layer.open({
+		type: 2,
+		title: title,
+		content: url
+	});
+	layer.full(index);
+}
+/*产品-添加*/
+function product_add(title,url){
+	var index = layer.open({
+		type: 2,
+		title: title,
+		content: url
+	});
+	layer.full(index);
+}
+/*用户-添加*/
+function member_add(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head
+        th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+    <!-- <meta th:include="~{fragment/_meta::_meta}"></meta> -->
+    <meta charset="utf-8">
+    <link>
+    <style type="text/css"></style>
+    <link th:href="@{/lib/select2/css/select2.css}" rel="stylesheet"/>
+    <title>编辑管理员 - 管理员管理 </title>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-admin-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>姓名：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="name" name="name"
+                       onkeyup="this.value=this.value.replace(/\W/g,'')"
+                       onafterpaste="this.value=this.value.replace(/\W/g,'')"
+                       th:value="${user.name}">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>账户名：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="hidden" th:value="${user.id}" name="id"/>
+                <input type="text" disabled="disabled" class="input-text" th:value="${user.loginName}" placeholder=""
+                       id="adminName" name="loginName">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>初始密码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="password" class="input-text" autocomplete="off" th:value="${user.pwd}" placeholder="密码"
+                       id="password" name="pwd">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>确认密码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="password" th:value="${user.pwd}" class="input-text" autocomplete="off" placeholder="确认新密码"
+                       id="password2" name="pwd2">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>性别：</label>
+            <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+                <div class="radio-box">
+                    <input name="sex" value="M" type="radio" id="sex-1" th:checked="${user.sex} eq M">
+                    <label for="sex-1">男</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" value="F" id="sex-2" name="sex" th:checked="${user.sex} eq F">
+                    <label for="sex-2">女</label>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手机：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="phone" name="phone">
+            </div>
+        </div> -->
+        <!-- <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>邮箱：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" placeholder="@" name="email" id="email">
+            </div>
+        </div> -->
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span
+                    class="c-red">*</span>上级：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select class="col-xs-8 col-sm-4" id="userList" name="parent.id">
+                    <option th:each="b,bstu:${users}" th:value="${b.id}"
+                            th:selected="${user.parent==null?false:(user.parent.id == b.id)}"
+                            th:text="${b.loginName}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">角色：</label>
+            <div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+			<select class="select" name="role.id" size="1">
+				<option th:selected="${user.role==null?false:(user.role.id == r.id)}" th:value="${r.id}"
+                        th:each="r,rs:${roles}" th:text="${r.name}">级管理员</option>
+
+                <!-- <option th:selected="${user.role} eq financer" value="financer">帐务管理员</option>
+                <option th:selected="${user.role} eq customer" value="customer">客户</option>
+                <option th:selected="${user.role} eq user" value="user">普通用户</option> -->
+			</select>
+			</span></div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">备注：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+
+                <textarea name="remark" th:text="${user.remark}" cols="" rows="" class="textarea"
+                          placeholder="说点什么...100个字符以内" dragonfly="true"></textarea>
+                <p class="textarea-numberbar"><em class="textarea-length"
+                                                  th:text="${#strings.length(user.remark)}">0</em>/100</p>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">谷歌验证码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <!-- <img width="100" id="qrcode" class="picture-thumb" th:src="@{'/googlev/generateImage?content='+${qrcodeStr}}"> -->
+                <img width="100" id="qrcode" class="picture-thumb"
+                     th:src="@{/googlev/generateImage?content={q}&size={size}(q=${qrcodeStr},size=6)}">
+                <a th:onclick="|resetGC(${user.id})|" class="btn btn-success radius"><i class="Hui-iconfont"></i>生成/重置</a>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<div th:include="~{fragment/_footer::_footer}"></div>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" th:src="@{/lib/select2/js/select2.js}"></script>
+<script type="text/javascript">
+    $(function () {
+
+        $("#userList").select2({
+            placeholder: "请输入用户名",
+            allowClear: true
+        });
+        $("textarea[name='remark']").on("keyup", function (e) {
+            //alert("tt");
+            $("textarea[name='remark']").Huitextarealength({maxlength: 100});
+        })
+
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+
+
+        $("#form-admin-add").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 2,
+                    maxlength: 16
+                },
+                loginName: {
+                    required: true,
+                    minlength: 4,
+                    maxlength: 16
+                },
+                pwd: {
+                    required: true,
+                },
+                pwd2: {
+                    required: true,
+                    equalTo: "#password"
+                },
+                sex: {
+                    required: true,
+                },
+                /* phone:{
+                    required:true,
+                    isPhone:true,
+                }, */
+                /* email:{
+                    required:true,
+                    email:true,
+                }, */
+                adminRole: {
+                    required: true,
+                },
+            },
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                $.ajax({
+                    type: 'post',
+                    data: $(form).serialize(),
+                    url: "/user/admin-update",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == Result.SUCCESS) {
+                            parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                            //关闭
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.$('.btn-refresh').click();
+                            parent.layer.close(index);
+                        } else if (data.code == Result.FAIL) {
+                            parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                        } else {
+                            console.log(data);
+                        }
+                    }
+
+                });
+
+            }
+        });
+    });
+
+    /**
+     * 重置/生成谷歌验证码
+     */
+    function resetGC(id) {
+        $.ajax({
+            type: 'get',
+            data: {id: id},
+            url: "/user/resetGC",
+            dataType: "json",
+            success: function (data) {
+                if (data.code == Result.SUCCESS) {
+                    parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                    $("#qrcode").attr("src", "/googlev/generateImage?content=" + data.data.qrcodeStr);
+                } else if (data.code == Result.FAIL) {
+                    parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                } else {
+                    console.log(data);
+                }
+            }
+        });
+
+    }
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

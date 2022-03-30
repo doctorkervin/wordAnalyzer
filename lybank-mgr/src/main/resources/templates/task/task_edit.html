@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head
+        th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+    <link>
+    <title>编辑任务信息</title>
+    <meta charset="utf-8">
+    <style type="text/css"></style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-task-edit">
+        <input type="hidden" th:value="${p.id}" name="id"/>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>任务名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" autocomplete="off"
+                       th:value="${p.name}" placeholder="任务名称" id="name" name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>文件来源：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div class="radio-box">
+                    <input type="radio" id="sex-1" name="fileType" value="2" th:checked="${p.fileType eq '1'}">
+                    <label for="sex-1">上传文件</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="sex-2" name="fileType" value="1" th:checked="${p.fileType eq '2'}">
+                    <label for="sex-2">自定义文件路径</label>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>规则列表：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <dl class="permission-list" id="bankAccountInfoId-dl-list">
+
+                    <dd class="bankAccountInfoId-dd">
+                        <label class="" th:each="brow,browStatus:${regulars}" >
+                            <input type="checkbox" th:value="${brow.id}"
+                                   th:id="'regular_'+${brow.id}" name="idList" id="idList">
+                            <span th:text="${brow.name}"></span>
+                            &nbsp;&nbsp;&nbsp;
+                        </label>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;修改任务&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<div th:include="~{fragment/_footer::_footer}"></div>
+<!--请在下方写此页面业务相关的脚本-->
+
+<script type="text/javascript" th:inline="javascript" >
+/*<![CDATA[*/
+	var checkedList=/*[[${rList}]]*/'';
+/*]]>*/
+    $(function () {
+        $(".bankAccountInfoId-dt input:checkbox").click(function () {
+            $(".bankAccountInfoId-dd input[name='idList']").prop("checked", $(this).prop("checked"));
+        });
+
+        function initCheckbox() {
+            var noSize = $("input[name='idList']").length;
+            var yesSize = $("input[name='idList']:checked").length;
+            if (noSize == yesSize) {
+                $(".bankAccountInfoId-dt input[name='idLists-dt']").prop("checked", true);
+            } else {
+                $(".bankAccountInfoId-dt input[name='idLists-dt']").prop("checked", false);
+            }
+        }
+
+        $(".bankAccountInfoId-dd input:checkbox").click(function () {
+            initCheckbox();
+        });
+        for( let c in checkedList){
+		    $("#regular_"+checkedList[c]).prop("checked","true");
+	    }
+
+        $("#form-task-edit").validate({
+            rules: {
+
+            },
+            messages: {},
+            onkeyup: false,
+            focusCleanup: true,
+            success: "valid",
+            submitHandler: function (form) {
+                $.ajax({
+                    type: 'post',
+                    data: $(form).serialize(),
+                    url: "/task/info/update",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == Result.SUCCESS) {
+                            parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                            //关闭
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.$('.btn-success').click();
+                            parent.layer.close(index);
+                        } else if (data.code == Result.FAIL) {
+                            parent.layer.msg(data.msg, {icon: 1, time: 3000});
+                        } else {
+                            console.log(data);
+                        }
+                    }
+                });
+            }
+        });
+
+
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

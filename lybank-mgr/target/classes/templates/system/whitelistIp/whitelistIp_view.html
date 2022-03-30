@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head
+        th:replace="~{fragment/_meta::_meta_common(~{::title},~{::link},~{::style})}">
+    <!-- <meta th:include="~{fragment/_meta::_meta}"></meta> -->
+    <title>查看商户渠道关联信息</title>
+    <meta charset="utf-8">
+    <link>
+    <style type="text/css"></style>
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="pay-channel-view">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">所属商户：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${p.mchName}" th:text="${p.mchName}"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">IP：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${p.ip}" th:text="${p.ip}"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">类型：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:if="${p.state eq 1}">后台白名单</span>
+                <span th:if="${p.state eq 2}">接口白名单</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">状态：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:if="${p.state eq 0}">停止使用</span>
+                <span th:if="${p.state eq 1}">使用中</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">备注：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${p.remark}" th:text="${p.remark}"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">创建时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${#dates.format(p.createTime, 'yyyy-MM-dd hh:mm:ss')}" th:text="${#dates.format(p.createTime, 'yyyy-MM-dd hh:mm:ss')}"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">操作时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span th:title="${#dates.format(p.operaterTime, 'yyyy-MM-dd hh:mm:ss')}" th:text="${#dates.format(p.operaterTime, 'yyyy-MM-dd hh:mm:ss')}"></span>
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<div th:include="~{fragment/_footer::_footer}"></div>
+
+</body>
+</html>
