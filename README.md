@@ -1,0 +1,2 @@
+# wordAnalyzer
+分析
