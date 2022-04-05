@@ -59,10 +59,8 @@
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>文件路径：</label>
             <div class="formControls col-xs-8 col-sm-9">
-                <!--todo 用户可以手动选择目录或者文件，不需要手写-->
                 <input type="text" class="input-text" autocomplete="off"
                        placeholder="非自定义文件路径不用写" id="filePath" name="filePath">
-                <input class="upload" type="file" value="选择"  id="input-file">
             </div>
         </div>
         <div class="row cl">
@@ -150,15 +148,6 @@
         });
     });
 
-    $('.upload').change(function(){
-            var oFReader = new FileReader();
-            var file = document.getElementById('input-file').files[0];
-            oFReader.readAsDataURL(file);
-            oFReader.onloadend = function(oFRevent){
-                var src = oFRevent.target.result;
-                document.getElementById(filePath).value = src；
-            }
-        });
 </script>
 <!--/请在上方写此页面业务相关的脚本-->
 </body>
